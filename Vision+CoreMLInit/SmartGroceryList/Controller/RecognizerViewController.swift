@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Vision
 
 // MARK: - RecognizerViewController: UIViewController
 
@@ -94,13 +95,27 @@ class RecognizerViewController: UIViewController {
     
     private func classifyFood(image: UIImage) {
         // 1. Create the vision model, VNCoreMLModel
+        guard let visionModel = try? VNCoreMLModel(for: mobileNet.model) else {
+            fatalError("Unable to convert to Vision Core ML Model")
+        }
         
         // 2. Create the request, VNCoreMLRequest
+        let request = VNCoreMLRequest(model: visionModel, completionHandler: self.handleFoodClassificationResults)
         
         // 3. Create the request handler, VNImageRequestHandler
+        guard let cgImage = image.cgImage else {
+            fatalError("Unable to convert image to cgImage")
+        }
+        let portraitOrientation = CGImagePropertyOrientation(rawValue: UInt32(image.imageOrientation.rawValue))!
+        let requestHandler = VNImageRequestHandler(cgImage: cgImage, orientation: portraitOrientation)
         
         // 4. Call perform on the request handler with the request
-
+        do {
+            try requestHandler.perform([request])
+        }
+        catch {
+            fatalError("unable to perform request")
+        }
     }
     
     // 5. Handle the food classification results
