@@ -83,15 +83,6 @@ class RecognizerViewController: UIViewController {
         imageView.image = nil
         currentPrediction = nil
     }
-
-    private func recognize(image: UIImage) -> String? {
-        if let pixelBufferImage = ImageToPixelBufferConverter.convertToPixelBuffer(image: image) {
-            if let prediction = try? self.mobileNet.prediction(image: pixelBufferImage) {
-                return prediction.classLabel
-            }
-        }
-        return nil
-    }
     
     private func classifyFood(image: UIImage) {
         // 1. Create the vision model, VNCoreMLModel
@@ -120,8 +111,13 @@ class RecognizerViewController: UIViewController {
     
     // 5. Handle the food classification results
     private func handleFoodClassificationResults(for request: VNRequest, error: Error?) {
-
-    }
+        guard let classifications = request.results as? [VNClassificationObservation],
+            let topClassification = classifications.first else {
+                self.showRecognitionFailureAlert()
+                return
+            }
+        self.setupPrediction(prediction: topClassification.identifier)
+        }
     
     private func showRecognitionFailureAlert() {
         let alertController = UIAlertController.init(title: "Recognition Failure", message: "Please try another image.", preferredStyle: .alert)
@@ -163,12 +159,8 @@ extension RecognizerViewController: UIImagePickerControllerDelegate, UINavigatio
         if let imageSelected = info[UIImagePickerControllerOriginalImage] as? UIImage {
             imageView.contentMode = .scaleAspectFit
             imageView.image = imageSelected
-            
-            if let topPrediction = recognize(image: imageSelected) {
-                setupPrediction(prediction: topPrediction)
-            } else {
-                showRecognitionFailureAlert()
-            }
+           
+            classifyFood(image: imageSelected)
         }
         
         dismiss(animated: true, completion: nil)
