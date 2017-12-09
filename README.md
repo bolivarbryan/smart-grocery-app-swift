@@ -1,3 +1,8 @@
+# CoreML Course on Udacity
+I house my codez and my [notes](https://github.com/lovelejess/smart-grocery-app-swift/wiki) here.
+
+
+
 # Core ML Mini-Course
 
 Resources for Udacity's Core ML mini-course. This repository contains the iOS image classification app (SmartGroceryList) in various formats including its integration with and without Vision framework. A custom Core ML model is also included.
