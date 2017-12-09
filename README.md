@@ -1,4 +1,5 @@
 # CoreML Course on Udacity
+[CoreML Course Repository](https://github.com/udacity/ios-short-core-ml)
 I house my codez and my [notes](https://github.com/lovelejess/smart-grocery-app-swift/wiki) here.
 
 
